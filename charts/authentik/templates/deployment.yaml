@@ -1,4 +1,6 @@
 {{- range list "server" "worker" }}
+{{- $role := . -}}
+{{- $roleSpec := (index $.Values $role) }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -6,22 +8,18 @@ metadata:
   name: {{ printf "%s-%s" (include "common.names.fullname" $) . }}
   labels:
     {{- include "common.labels" $ | nindent 4 }}
-    app.kubernetes.io/component: "{{ . }}"
+    app.kubernetes.io/component: "{{ $role }}"
 spec:
-  {{ if eq . "server" -}}
-  replicas: {{ $.Values.replicas }}
-  {{- else -}}
-  replicas: {{ $.Values.worker.replicas }}
-  {{- end }}
+  replicas: {{ $roleSpec.replicas }}
   selector:
     matchLabels:
       {{- include "common.labels.selectorLabels" $ | nindent 6 }}
-      app.kubernetes.io/component: "{{ . }}"
+      app.kubernetes.io/component: "{{ $role }}"
   template:
     metadata:
       labels:
         {{- include "common.labels.selectorLabels" $ | nindent 8 }}
-        app.kubernetes.io/component: "{{ . }}"
+        app.kubernetes.io/component: "{{ $role }}"
         app.kubernetes.io/version: "{{ $.Values.image.tag }}"
       {{- if $.Values.podAnnotations }}
       annotations:
@@ -60,20 +58,16 @@ spec:
         {{- end }}
         {{- tpl (toYaml $initContainers) $ | nindent 8 }}
       {{- end }}
-      {{ if eq . "server" -}}
-      priorityClassName: {{ $.Values.priorityClassName }}
+      priorityClassName: {{ $roleSpec.priorityClassName }}
       securityContext:
-        {{- toYaml $.Values.securityContext | nindent 8 }}
-      {{- else -}}
-      priorityClassName: {{ $.Values.worker.priorityClassName }}
-      securityContext:
-        {{- toYaml $.Values.worker.securityContext | nindent 8 }}
-      {{- end }}
+        {{- toYaml $roleSpec.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ $.Chart.Name }}
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}{{- if $.Values.image.digest -}}@{{ $.Values.image.digest }}{{- end -}}"
           imagePullPolicy: "{{ $.Values.image.pullPolicy }}"
           args: [{{ quote . }}]
+          securityContext:
+            {{- toYaml $roleSpec.containerSecurityContext | nindent 12 }}
           env:
             {{- range $k, $v := $.Values.env }}
             - name: {{ quote $k }}
@@ -97,7 +91,7 @@ spec:
             {{- with $.Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-      {{ if eq . "worker" -}}
+      {{ if eq $role "worker" -}}
             {{- with $.Values.blueprints }}
               {{- range $name := . }}
             - name: blueprints-{{ $name }}
@@ -105,7 +99,7 @@ spec:
               {{- end }}
             {{- end }}
       {{- end }}
-            {{- if eq . "server" }}
+            {{- if eq $role "server" }}
           ports:
             - name: http
               containerPort: 9000
@@ -169,7 +163,7 @@ spec:
       {{- with $.Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{ if eq . "worker" -}}
+    {{ if eq $role "worker" -}}
       {{- with $.Values.blueprints }}
         {{- range $name := . }}
         - name: blueprints-{{ $name }}

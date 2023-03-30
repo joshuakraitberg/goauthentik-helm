@@ -1,17 +1,22 @@
-# -- Server replicas
-replicas: 1
-# -- Custom priority class for different treatment by the scheduler
-priorityClassName:
-# -- server securityContext
-securityContext: {}
+server:
+  # -- Server replicas
+  replicas: 1
+  # -- Custom priority class for different treatment by the scheduler
+  priorityClassName:
+  # -- server podSecurityContext
+  podSecurityContext: {}
+  # -- server containerSecurityContext
+  containerSecurityContext: {}
 
 worker:
   # -- worker replicas
   replicas: 1
   # -- Custom priority class for different treatment by the scheduler
   priorityClassName:
-  # -- worker securityContext
-  securityContext: {}
+  # -- worker podSecurityContext
+  podSecurityContext: {}
+  # -- worker containerSecurityContext
+  containerSecurityContext: {}
 
 image:
   repository: ghcr.io/goauthentik/server

@@ -4,9 +4,17 @@ server:
   # -- Custom priority class for different treatment by the scheduler
   priorityClassName:
   # -- server podSecurityContext
-  podSecurityContext: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
   # -- server containerSecurityContext
-  containerSecurityContext: {}
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: false
 
 worker:
   # -- worker replicas
@@ -14,9 +22,17 @@ worker:
   # -- Custom priority class for different treatment by the scheduler
   priorityClassName:
   # -- worker podSecurityContext
-  podSecurityContext: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
   # -- worker containerSecurityContext
-  containerSecurityContext: {}
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: false
 
 image:
   repository: ghcr.io/goauthentik/server
@@ -90,7 +106,7 @@ authentik:
     # -- set the postgresql hostname to talk to
     # if unset and .Values.postgresql.enabled == true, will generate the default
     # @default -- `{{ .Release.Name }}-postgresql`
-    host: '{{ .Release.Name }}-postgresql'
+    host: "{{ .Release.Name }}-postgresql"
     # -- postgresql Database name
     # @default -- `authentik`
     name: "authentik"
@@ -102,7 +118,7 @@ authentik:
   redis:
     # -- set the redis hostname to talk to
     # @default -- `{{ .Release.Name }}-redis-master`
-    host: '{{ .Release.Name }}-redis-master'
+    host: "{{ .Release.Name }}-redis-master"
     password: ""
 
 # -- List of config maps to mount blueprints from. Only keys in the

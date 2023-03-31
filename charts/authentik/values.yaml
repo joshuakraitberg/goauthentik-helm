@@ -68,6 +68,10 @@ authentik:
   # -- Secret key used for cookie singing and unique user IDs,
   # don't change this after the first install
   secret_key: ""
+  # -- Default akadmin password
+  bootstrap_password: ""
+  # -- Default akadmin api key
+  bootstrap_token: ""
   # -- Path for the geoip database. If the file doesn't exist, GeoIP features are disabled.
   geoip: /geoip/GeoLite2-City.mmdb
   # -- Mode for the avatars. Defaults to gravatar. Possible options 'gravatar' and 'none'

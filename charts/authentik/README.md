@@ -6,8 +6,8 @@
 
 [![Join Discord](https://img.shields.io/discord/809154715984199690?label=Discord&style=for-the-badge)](https://goauthentik.io/discord)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/goauthentik/helm/lint-test.yaml?branch=main&label=ci&style=for-the-badge)](https://github.com/goauthentik/helm/actions/workflows/lint-test.yaml)
-![Version: 2023.3.1](https://img.shields.io/badge/Version-2023.3.1-informational?style=for-the-badge)
-![AppVersion: 2023.3.1](https://img.shields.io/badge/AppVersion-2023.3.1-informational?style=for-the-badge)
+![Version: 2023.4.1](https://img.shields.io/badge/Version-2023.4.1-informational?style=for-the-badge)
+![AppVersion: 2023.4.1](https://img.shields.io/badge/AppVersion-2023.4.1-informational?style=for-the-badge)
 
 authentik is an open-source Identity Provider focused on flexibility and versatility
 
@@ -55,7 +55,7 @@ redis:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.goauthentik.io | serviceAccount(authentik-remote-cluster) | 1.0.3 |
+| https://charts.goauthentik.io | serviceAccount(authentik-remote-cluster) | 1.1.2 |
 | https://charts.goauthentik.io | postgresql | 10.16.2 |
 | https://charts.goauthentik.io | redis | 15.7.6 |
 | https://library-charts.k8s-at-home.com | common | 4.2.0 |
@@ -66,7 +66,6 @@ redis:
 |-----|------|---------|-------------|
 | additionalContainers | object | `{}` | See https://github.com/k8s-at-home/library-charts/tree/main/charts/stable/common#values |
 | affinity | object | `{}` | affinity applied to the deployments |
-| authentik.avatars | string | `"gravatar"` | Mode for the avatars. Defaults to gravatar. Possible options 'gravatar' and 'none' |
 | authentik.email.from | string | `""` | Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>" |
 | authentik.email.host | string | `""` | SMTP Server emails are sent from, fully optional |
 | authentik.email.password | string | `""` | SMTP credentials, when left empty, not authentication will be done |
@@ -105,7 +104,7 @@ redis:
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.pullSecrets | list | `[]` |  |
 | image.repository | string | `"ghcr.io/goauthentik/server"` |  |
-| image.tag | string | `"2023.3.1"` |  |
+| image.tag | string | `"2023.4.1"` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.hosts[0].host | string | `"authentik.domain.tld"` |  |
@@ -129,8 +128,10 @@ redis:
 | postgresql.postgresqlUsername | string | `"authentik"` |  |
 | priorityClassName | string | `nil` | Custom priority class for different treatment by the scheduler |
 | prometheus.rules.create | bool | `false` |  |
+| prometheus.rules.labels | object | `{}` | labels additional on PrometheusRule |
 | prometheus.serviceMonitor.create | bool | `false` |  |
 | prometheus.serviceMonitor.interval | string | `"30s"` |  |
+| prometheus.serviceMonitor.labels | object | `{}` | labels additional on ServiceMonitor |
 | prometheus.serviceMonitor.scrapeTimeout | string | `"3s"` |  |
 | readinessProbe.enabled | bool | `true` |  |
 | readinessProbe.httpGet.path | string | `"/-/health/ready/"` |  |
@@ -154,6 +155,7 @@ redis:
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.create | bool | `true` | Service account is needed for managed outposts |
+| serviceAccount.serviceAccountSecret.enabled | bool | `false` | As we use the authentik-remote-cluster chart as subchart, and that chart creates a service account secret by default which we don't need here, disable its creation |
 | tolerations | list | `[]` |  |
 | volumeMounts | list | `[]` |  |
 | volumes | list | `[]` |  |

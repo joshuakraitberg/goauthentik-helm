@@ -36,7 +36,7 @@ worker:
 
 image:
   repository: ghcr.io/goauthentik/server
-  tag: 2023.3.1
+  tag: 2023.4.1
   # -- optional container image digest
   digest: ""
   pullPolicy: IfNotPresent
@@ -74,8 +74,6 @@ authentik:
   bootstrap_token: ""
   # -- Path for the geoip database. If the file doesn't exist, GeoIP features are disabled.
   geoip: /geoip/GeoLite2-City.mmdb
-  # -- Mode for the avatars. Defaults to gravatar. Possible options 'gravatar' and 'none'
-  avatars: gravatar
   email:
     # -- SMTP Server emails are sent from, fully optional
     host: ""
@@ -194,14 +192,22 @@ serviceAccount:
   # -- Service account is needed for managed outposts
   create: true
   annotations: {}
+  serviceAccountSecret:
+    # -- As we use the authentik-remote-cluster chart as subchart, and that chart
+    # creates a service account secret by default which we don't need here, disable its creation
+    enabled: false
 
 prometheus:
   serviceMonitor:
     create: false
     interval: 30s
     scrapeTimeout: 3s
+    # -- labels additional on ServiceMonitor
+    labels: {}
   rules:
     create: false
+    # -- labels additional on PrometheusRule
+    labels: {}
 
 geoip:
   # -- optional GeoIP, deploys a cronjob to download the maxmind database
